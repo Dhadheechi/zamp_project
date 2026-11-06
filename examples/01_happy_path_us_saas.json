@@ -1,0 +1,32 @@
+{
+  "submission_id": "SUB-2026-US-CLOUD",
+  "company": {
+    "legal_name": "CloudScale Technologies Inc.",
+    "dba_name": "CloudScale",
+    "country_code": "US",
+    "business_address": "500 Howard Street, Suite 400, San Francisco, CA 94105",
+    "business_type": "Corporation",
+    "tax_id": "84-1928374",
+    "tax_id_type": "EIN",
+    "contact_name": "Sarah Jenkins",
+    "contact_email": "billing@cloudscale.io",
+    "contact_phone": "+1-415-555-0199",
+    "website": "https://cloudscale.io"
+  },
+  "banking": {
+    "bank_name": "JPMorgan Chase Bank, N.A.",
+    "bank_country": "US",
+    "account_holder_name": "CloudScale Technologies Inc.",
+    "account_number_or_iban": "48920194820",
+    "routing_or_sort_code": "021000021",
+    "swift_bic": "CHASUS33",
+    "currency": "USD",
+    "account_type": "Corporate Checking"
+  },
+  "compliance": {
+    "tax_document_attached": true,
+    "bank_statement_attached": true,
+    "certificate_of_incorporation": true,
+    "pep_sanctions_declared_clear": true
+  }
+}

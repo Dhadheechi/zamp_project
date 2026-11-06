@@ -1,0 +1,32 @@
+{
+  "submission_id": "SUB-2026-TAX-SYNTAX-FAIL",
+  "company": {
+    "legal_name": "Klausen Precision Engineering GmbH",
+    "dba_name": "Klausen Tools",
+    "country_code": "DE",
+    "business_address": "Industriestrasse 14, 70565 Stuttgart, Germany",
+    "business_type": "GmbH",
+    "tax_id": "GB928371940",
+    "tax_id_type": "VAT",
+    "contact_name": "Hans Klausen",
+    "contact_email": "accounting@klausen-precision.de",
+    "contact_phone": "+49 711 555 0122",
+    "website": "https://klausen-precision.de"
+  },
+  "banking": {
+    "bank_name": "Deutsche Bank AG",
+    "bank_country": "DE",
+    "account_holder_name": "Klausen Precision Engineering GmbH",
+    "account_number_or_iban": "DE89370400440532013000",
+    "routing_or_sort_code": "37040044",
+    "swift_bic": "DEUTDEDBFRA",
+    "currency": "EUR",
+    "account_type": "Corporate Checking"
+  },
+  "compliance": {
+    "tax_document_attached": true,
+    "bank_statement_attached": true,
+    "certificate_of_incorporation": true,
+    "pep_sanctions_declared_clear": true
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "submission_id": "SUB-2026-JP-SWIFT-MISSING",
+  "company": {
+    "legal_name": "Tokyo Automation Works K.K.",
+    "dba_name": "Tokyo Robotics",
+    "country_code": "JP",
+    "business_address": "2-3-1 Marunouchi, Chiyoda-ku, Tokyo 100-0005, Japan",
+    "business_type": "Kabushiki Kaisha",
+    "tax_id": "1010001099881",
+    "tax_id_type": "Corporate Number",
+    "contact_name": "Kenji Sato",
+    "contact_email": "finance@tokyo-robotics.co.jp",
+    "contact_phone": "+81 3 5555 0188",
+    "website": "https://tokyo-robotics.co.jp"
+  },
+  "banking": {
+    "bank_name": "MUFG Bank, Ltd.",
+    "bank_country": "JP",
+    "account_holder_name": "Tokyo Automation Works K.K.",
+    "account_number_or_iban": "0091827",
+    "routing_or_sort_code": "0005-001",
+    "swift_bic": "",
+    "currency": "JPY",
+    "account_type": "Corporate Checking"
+  },
+  "compliance": {
+    "tax_document_attached": true,
+    "bank_statement_attached": true,
+    "certificate_of_incorporation": true,
+    "pep_sanctions_declared_clear": true
+  }
+}

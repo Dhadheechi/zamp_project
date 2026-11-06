@@ -1,0 +1,32 @@
+{
+  "submission_id": "SUB-2026-FR-DATA",
+  "company": {
+    "legal_name": "Lumiere Analytics SAS",
+    "dba_name": "Lumiere AI",
+    "country_code": "FR",
+    "business_address": "45 Rue de Rivoli, 75001 Paris, France",
+    "business_type": "Societe par Actions Simplifiee",
+    "tax_id": "834920194",
+    "tax_id_type": "SIREN",
+    "contact_name": "Camille Dupont",
+    "contact_email": "facturation@lumiere-analytics.fr",
+    "contact_phone": "+33 1 40 20 50 00",
+    "website": "https://lumiere-analytics.fr"
+  },
+  "banking": {
+    "bank_name": "BNP Paribas",
+    "bank_country": "FR",
+    "account_holder_name": "Lumiere Analytics SAS",
+    "account_number_or_iban": "FR7630004012345678901234567",
+    "routing_or_sort_code": "30004",
+    "swift_bic": "BNPAFR2A",
+    "currency": "EUR",
+    "account_type": "Corporate Checking"
+  },
+  "compliance": {
+    "tax_document_attached": true,
+    "bank_statement_attached": true,
+    "certificate_of_incorporation": true,
+    "pep_sanctions_declared_clear": true
+  }
+}

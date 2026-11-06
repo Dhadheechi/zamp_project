@@ -1,0 +1,32 @@
+{
+  "submission_id": "SUB-2026-FRAUD-ALERT",
+  "company": {
+    "legal_name": "Apex Industrial Logistics LLC",
+    "dba_name": "Apex Freight",
+    "country_code": "US",
+    "business_address": "1244 Commerce Blvd, Chicago, IL 60607",
+    "business_type": "LLC",
+    "tax_id": "36-9812450",
+    "tax_id_type": "EIN",
+    "contact_name": "Elena Rostova",
+    "contact_email": "erostova@apexlogistics-portal.com",
+    "contact_phone": "+1-312-555-0144",
+    "website": "https://apexlogistics-portal.com"
+  },
+  "banking": {
+    "bank_name": "Wells Fargo Bank, N.A.",
+    "bank_country": "US",
+    "account_holder_name": "Elena Rostova (Personal Checking)",
+    "account_number_or_iban": "1092837491",
+    "routing_or_sort_code": "121000248",
+    "swift_bic": "WFBIUS6S",
+    "currency": "USD",
+    "account_type": "Personal Checking"
+  },
+  "compliance": {
+    "tax_document_attached": true,
+    "bank_statement_attached": false,
+    "certificate_of_incorporation": true,
+    "pep_sanctions_declared_clear": true
+  }
+}

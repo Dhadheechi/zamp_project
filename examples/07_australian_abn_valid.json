@@ -1,0 +1,32 @@
+{
+  "submission_id": "SUB-2026-AU-CORP",
+  "company": {
+    "legal_name": "Aura Mining Solutions Pty Ltd",
+    "dba_name": "Aura Systems",
+    "country_code": "AU",
+    "business_address": "120 Collins Street, Melbourne VIC 3000, Australia",
+    "business_type": "Proprietary Limited",
+    "tax_id": "51824753556",
+    "tax_id_type": "ABN",
+    "contact_name": "Liam Hemsworth",
+    "contact_email": "accounts@auramining.com.au",
+    "contact_phone": "+61 3 9000 1234",
+    "website": "https://auramining.com.au"
+  },
+  "banking": {
+    "bank_name": "Commonwealth Bank of Australia",
+    "bank_country": "AU",
+    "account_holder_name": "Aura Mining Solutions Pty Ltd",
+    "account_number_or_iban": "12345678",
+    "routing_or_sort_code": "063000",
+    "swift_bic": "CTBAAU2S",
+    "currency": "AUD",
+    "account_type": "Corporate Checking"
+  },
+  "compliance": {
+    "tax_document_attached": true,
+    "bank_statement_attached": true,
+    "certificate_of_incorporation": true,
+    "pep_sanctions_declared_clear": true
+  }
+}

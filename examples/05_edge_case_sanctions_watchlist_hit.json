@@ -1,0 +1,32 @@
+{
+  "submission_id": "SUB-2026-OFAC-SDN-BLOCK",
+  "company": {
+    "legal_name": "Sovereign Maritime Trading FZE",
+    "dba_name": "Sovereign Maritime",
+    "country_code": "SY",
+    "business_address": "PO Box 4910, Offshore Free Zone, Port Authority",
+    "business_type": "FZE",
+    "tax_id": "9928172635",
+    "tax_id_type": "VAT",
+    "contact_name": "Viktor Chernov",
+    "contact_email": "vchernov@mail.com",
+    "contact_phone": "+963 11 555 9900",
+    "website": ""
+  },
+  "banking": {
+    "bank_name": "Levant Commerce Bank",
+    "bank_country": "SY",
+    "account_holder_name": "Sovereign Maritime Trading",
+    "account_number_or_iban": "SY910000001928374615",
+    "routing_or_sort_code": "881029",
+    "swift_bic": "LVNTSYDA",
+    "currency": "EUR",
+    "account_type": "Corporate Checking"
+  },
+  "compliance": {
+    "tax_document_attached": false,
+    "bank_statement_attached": false,
+    "certificate_of_incorporation": false,
+    "pep_sanctions_declared_clear": false
+  }
+}

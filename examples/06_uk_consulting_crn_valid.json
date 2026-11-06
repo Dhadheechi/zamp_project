@@ -1,0 +1,32 @@
+{
+  "submission_id": "SUB-2026-UK-CLEAN",
+  "company": {
+    "legal_name": "Meridian Strategy Partners Ltd",
+    "dba_name": "Meridian Consulting",
+    "country_code": "GB",
+    "business_address": "25 Finsbury Circus, London EC2M 7EE, United Kingdom",
+    "business_type": "Private Limited Company",
+    "tax_id": "GB849201847",
+    "tax_id_type": "VAT",
+    "contact_name": "Alistair Campbell",
+    "contact_email": "finance@meridian-partners.co.uk",
+    "contact_phone": "+44 20 7946 0912",
+    "website": "https://meridian-partners.co.uk"
+  },
+  "banking": {
+    "bank_name": "Barclays Bank UK PLC",
+    "bank_country": "GB",
+    "account_holder_name": "Meridian Strategy Partners Ltd",
+    "account_number_or_iban": "GB29BARC20000083920194",
+    "routing_or_sort_code": "20-00-00",
+    "swift_bic": "BARCGB22",
+    "currency": "GBP",
+    "account_type": "Corporate Checking"
+  },
+  "compliance": {
+    "tax_document_attached": true,
+    "bank_statement_attached": true,
+    "certificate_of_incorporation": true,
+    "pep_sanctions_declared_clear": true
+  }
+}
