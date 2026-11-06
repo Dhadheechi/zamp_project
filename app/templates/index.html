@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zamp — AI Vendor Onboarding Engine (PS-2)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            zamp: {
+              50: '#f0f5ff',
+              100: '#e5edff',
+              500: '#2563eb',
+              600: '#1d4ed8',
+              700: '#1e40af',
+              900: '#0f172a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #0b0f19; color: #f1f5f9; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .glass { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .pulse-glow { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
+
+  <!-- TOP HEADER -->
+  <header class="border-b border-gray-800 bg-gray-950/80 sticky top-0 z-50 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-black text-white text-lg tracking-wider shadow-lg shadow-blue-500/20">
+            Z
+          </div>
+          <span class="text-xl font-bold tracking-tight text-white">zamp</span>
+        </div>
+        <span class="text-xs px-2.5 py-1 rounded-full font-semibold uppercase tracking-wider bg-blue-950 text-blue-400 border border-blue-800/60">
+          PS-2 · AI Solutions Analyst
+        </span>
+        <span class="hidden md:inline-flex text-xs text-gray-400">
+          Automated Vendor Onboarding & Audit Engine
+        </span>
+      </div>
+
+      <div class="flex items-center space-x-3 text-xs">
+        <div class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-emerald-950/60 border border-emerald-800/50 text-emerald-400">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-glow"></span>
+          <span class="font-medium">System Online</span>
+        </div>
+        <button onclick="clearHistory()" class="px-3 py-1.5 rounded-lg bg-gray-800/80 hover:bg-gray-700 text-gray-300 font-medium transition border border-gray-700/60">
+          Reset History
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- QUICK PRESETS / SCENARIO SELECTOR BAR -->
+  <div class="bg-gray-900/90 border-b border-gray-800 py-3">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+        <div class="flex items-center space-x-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+          <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          <span>One-Click Test Scenarios:</span>
+        </div>
+        <div class="flex flex-wrap gap-2 text-xs" id="presetPillsContainer">
+          <!-- Dynamic preset pills loaded here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN TWO-COLUMN WORKSPACE -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+    
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- LEFT COLUMN: INPUT SUBMISSION (5 cols) -->
+      <section class="lg:col-span-5 space-y-4">
+        <div class="glass rounded-xl p-5 shadow-2xl">
+          <div class="flex items-center justify-between pb-3 border-b border-gray-800 mb-4">
+            <div class="flex items-center space-x-2">
+              <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              <h2 class="font-semibold text-sm text-gray-200">Vendor Submission Payload</h2>
+            </div>
+            <div class="flex items-center bg-gray-900 rounded-lg p-0.5 border border-gray-800 text-xs">
+              <button id="tabFormBtn" onclick="toggleInputMode('form')" class="px-2.5 py-1 rounded-md font-medium bg-blue-600 text-white transition">Form</button>
+              <button id="tabJsonBtn" onclick="toggleInputMode('json')" class="px-2.5 py-1 rounded-md font-medium text-gray-400 hover:text-white transition">JSON</button>
+            </div>
+          </div>
+
+          <!-- Scenario Info Card -->
+          <div id="scenarioBanner" class="mb-4 p-3 rounded-lg bg-blue-950/40 border border-blue-900/60 text-xs space-y-1">
+            <div class="flex items-center justify-between">
+              <span id="scenarioTitle" class="font-bold text-blue-300">🟢 Happy Path: Domestic US Enterprise</span>
+              <span id="scenarioBadge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800">Expected: APPROVED</span>
+            </div>
+            <p id="scenarioDesc" class="text-gray-400">Standard legitimate US software vendor. All tax formats, ABA routing, corporate bank name match 100%.</p>
+          </div>
+
+          <!-- FORM VIEW -->
+          <form id="submissionForm" class="space-y-4 text-xs">
+            <div>
+              <label class="block text-gray-400 font-medium mb-1">Submission ID</label>
+              <input type="text" id="sub_id" class="w-full bg-gray-900/90 border border-gray-800 rounded-lg px-3 py-2 text-gray-200 mono focus:border-blue-500 focus:outline-none">
+            </div>
+
+            <!-- Company Details Section -->
+            <div class="p-3 rounded-lg bg-gray-900/50 border border-gray-800/80 space-y-2.5">
+              <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">1. Company Entity Details</span>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="text-gray-400 block mb-0.5">Legal Company Name *</label>
+                  <input type="text" id="comp_legal_name" class="w-full bg-gray-900 border border-gray-800 rounded px-2.5 py-1.5 text-gray-200 focus:border-blue-500 focus:outline-none">
+                </div>
+                <div>
+                  <label class="text-gray-400 block mb-0.5">DBA / Trade Name</label>
+                  <input type="text" id="comp_dba_name" class="w-full bg-gray-900 border border-gray-800 rounded px-2.5 py-1.5 text-gray-200 focus:border-blue-500 focus:outline-none">
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="text-gray-400 block mb-0.5">Country Code (ISO) *</label>
+                  <input type="text" id="comp_country" class="w-full bg-gray-900 border border-gray-800 rounded px-2.5 py-1.5 text-gray-200 mono focus:border-blue-500 focus:outline-none uppercase">
+                </div>
+                <div>
+                  <label class="text-gray-400 block mb-0.5">Business Type</label>
+                  <input type="text" id="comp_type" class="w-full bg-gray-900 border border-gray-800 rounded px-2.5 py-1.5 text-gray-200 focus:border-blue-500 focus:outline-none">
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="text-gray-400 block mb-0.5">Tax Registration / ID *</label>
+                  <input type="text" id="comp_tax_id" class="w-full bg-gray-900 border border-gray-800 rounded px-2.5 py-1.5 text-gray-200 mono focus:border-blue-500 focus:outline-none">
+                </div>
+                <div>
+                  <label class="text-gray-400 block mb-0.5">Tax ID Type</label>
+                  <input type="text" id="comp_tax_type" class="w-full bg-gray-900 border border-gray-800 rounded px-2.5 py-1.5 text-gray-200 focus:border-blue-500 focus:outline-none">
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="text-gray-400 block mb-0.5">Contact Full Name *</label>
+                  <input type="text" id="comp_contact_name" class="w-full bg-gray-900 border border-gray-800 rounded px-2.5 py-1.5 text-gray-200 focus:border-blue-500 focus:outline-none">
+                </div>
+                <div>
+                  <label class="text-gray-400 block mb-0.5">Contact Email *</label>
+                  <input type="email" id="comp_contact_email" class="w-full bg-gray-900 border border-gray-800 rounded px-2.5 py-1.5 text-gray-200 focus:border-blue-500 focus:outline-none">
+                </div>
+              </div>
+            </div>
+
+            <!-- Banking Section -->
+            <div class="p-3 rounded-lg bg-gray-900/50 border border-gray-800/80 space-y-2.5">
+              <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">2. Banking & Disbursement</span>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="text-gray-400 block mb-0.5">Bank Name *</label>
+                  <input type="text" id="bank_name" class="w-full bg-gray-900 border border-gray-800 rounded px-2.5 py-1.5 text-gray-200 focus:border-blue-500 focus:outline-none">
+                </div>
+                <div>
+                  <label class="text-gray-400 block mb-0.5">Bank Country *</label>
+                  <input type="text" id="bank_country" class="w-full bg-gray-900 border border-gray-800 rounded px-2.5 py-1.5 text-gray-200 mono focus:border-blue-500 focus:outline-none uppercase">
+                </div>
+              </div>
+              <div>
+                <label class="text-gray-400 block mb-0.5">Account Beneficiary / Holder Name *</label>
+                <input type="text" id="bank_holder" class="w-full bg-gray-900 border border-gray-800 rounded px-2.5 py-1.5 text-gray-200 focus:border-blue-500 focus:outline-none">
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="text-gray-400 block mb-0.5">Account # / IBAN *</label>
+                  <input type="text" id="bank_acc_num" class="w-full bg-gray-900 border border-gray-800 rounded px-2.5 py-1.5 text-gray-200 mono focus:border-blue-500 focus:outline-none">
+                </div>
+                <div>
+                  <label class="text-gray-400 block mb-0.5">Routing / Transit / Sort Code</label>
+                  <input type="text" id="bank_routing" class="w-full bg-gray-900 border border-gray-800 rounded px-2.5 py-1.5 text-gray-200 mono focus:border-blue-500 focus:outline-none">
+                </div>
+              </div>
+              <div class="grid grid-cols-3 gap-2">
+                <div>
+                  <label class="text-gray-400 block mb-0.5">SWIFT/BIC</label>
+                  <input type="text" id="bank_swift" class="w-full bg-gray-900 border border-gray-800 rounded px-2.5 py-1.5 text-gray-200 mono focus:border-blue-500 focus:outline-none uppercase">
+                </div>
+                <div>
+                  <label class="text-gray-400 block mb-0.5">Currency</label>
+                  <input type="text" id="bank_curr" class="w-full bg-gray-900 border border-gray-800 rounded px-2.5 py-1.5 text-gray-200 mono focus:border-blue-500 focus:outline-none">
+                </div>
+                <div>
+                  <label class="text-gray-400 block mb-0.5">Account Type</label>
+                  <input type="text" id="bank_acc_type" class="w-full bg-gray-900 border border-gray-800 rounded px-2.5 py-1.5 text-gray-200 focus:border-blue-500 focus:outline-none">
+                </div>
+              </div>
+            </div>
+
+            <!-- Documents Checkboxes -->
+            <div class="p-3 rounded-lg bg-gray-900/50 border border-gray-800/80 space-y-2">
+              <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">3. Attached Verification Documents</span>
+              <div class="grid grid-cols-2 gap-2 text-[11px]">
+                <label class="flex items-center space-x-2 text-gray-300">
+                  <input type="checkbox" id="doc_tax" class="rounded bg-gray-900 border-gray-700 text-blue-600 focus:ring-0">
+                  <span>W-9 / Tax Certificate</span>
+                </label>
+                <label class="flex items-center space-x-2 text-gray-300">
+                  <input type="checkbox" id="doc_bank" class="rounded bg-gray-900 border-gray-700 text-blue-600 focus:ring-0">
+                  <span>Bank Verification Letter</span>
+                </label>
+                <label class="flex items-center space-x-2 text-gray-300">
+                  <input type="checkbox" id="doc_incorp" class="rounded bg-gray-900 border-gray-700 text-blue-600 focus:ring-0">
+                  <span>Incorp. Certificate</span>
+                </label>
+                <label class="flex items-center space-x-2 text-gray-300">
+                  <input type="checkbox" id="doc_pep" class="rounded bg-gray-900 border-gray-700 text-blue-600 focus:ring-0">
+                  <span>Sanctions Clearance</span>
+                </label>
+              </div>
+            </div>
+          </form>
+
+          <!-- JSON VIEW (HIDDEN INITIALLY) -->
+          <div id="jsonViewContainer" class="hidden space-y-2">
+            <textarea id="jsonPayloadEditor" rows="18" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-3 text-xs mono text-green-400 focus:border-blue-500 focus:outline-none"></textarea>
+          </div>
+
+          <!-- PRIMARY RUN BUTTON -->
+          <button id="runPipelineBtn" onclick="executePipeline()" class="w-full mt-4 py-3 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold text-sm shadow-xl shadow-blue-600/30 transition transform active:scale-[0.99] flex items-center justify-center space-x-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>Run Automated Verification Pipeline</span>
+          </button>
+        </div>
+      </section>
+
+
+      <!-- RIGHT COLUMN: LIVE EXECUTION STAGES & OUTPUT (7 cols) -->
+      <section class="lg:col-span-7 space-y-5">
+        
+        <!-- LIVE STAGE EXECUTION PIPELINE -->
+        <div class="glass rounded-xl p-5 shadow-2xl space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-gray-800">
+            <div class="flex items-center space-x-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+              <h2 class="font-semibold text-sm text-gray-200">Live Stage Execution Pipeline</h2>
+            </div>
+            <div id="pipelineTimerBadge" class="text-xs mono px-2.5 py-1 rounded bg-gray-900 border border-gray-800 text-gray-400">
+              Latency: <span id="pipelineTotalMs">0.00</span> ms
+            </div>
+          </div>
+
+          <!-- STAGES CONTAINER -->
+          <div class="space-y-3" id="stagesContainer">
+            <!-- Initial placeholder or stage cards -->
+            <div class="p-8 text-center text-gray-500 text-xs">
+              Select a scenario preset above or edit the form, then click <strong>"Run Automated Verification Pipeline"</strong> to watch each stage execute live.
+            </div>
+          </div>
+        </div>
+
+        <!-- DECISION RESULT CARD -->
+        <div id="decisionCard" class="glass rounded-xl p-5 shadow-2xl hidden space-y-4 border-l-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-gray-800">
+            <div class="flex items-center space-x-3">
+              <div id="decisionIconBadge" class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-lg">
+                <!-- Icon injected -->
+              </div>
+              <div>
+                <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block">Pipeline Final Status</span>
+                <span id="decisionStatusText" class="text-xl font-bold tracking-tight"></span>
+              </div>
+            </div>
+
+            <!-- Risk Score Gauge -->
+            <div class="flex items-center space-x-3 bg-gray-900/80 px-3 py-1.5 rounded-lg border border-gray-800">
+              <div class="text-right">
+                <span class="text-[10px] text-gray-400 block font-semibold uppercase">Risk Score</span>
+                <span id="riskScoreValue" class="text-sm font-bold mono">0 / 100</span>
+              </div>
+              <div class="w-16 bg-gray-800 h-2 rounded-full overflow-hidden">
+                <div id="riskScoreBar" class="h-full bg-emerald-500 rounded-full" style="width: 10%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary Reasoning -->
+          <div class="space-y-1.5 text-xs">
+            <span class="text-gray-400 font-medium">Audit Reasoning & Findings:</span>
+            <p id="decisionSummary" class="text-gray-200 bg-gray-900/60 p-3 rounded-lg border border-gray-800/80 leading-relaxed"></p>
+          </div>
+
+          <!-- Next Steps -->
+          <div class="text-xs text-gray-400">
+            <strong>Next Action:</strong> <span id="decisionNextSteps" class="text-gray-300"></span>
+          </div>
+
+          <!-- VENDOR COMMUNICATION DRAWER (Only when PENDING or REJECTED) -->
+          <div id="vendorCommSection" class="pt-3 border-t border-gray-800 space-y-3 hidden">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-2 text-xs font-semibold text-amber-400">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                <span>Automated Vendor Remediation Notice (Ready to Dispatch)</span>
+              </div>
+              <button onclick="copyEmailDraft()" class="text-[11px] px-2.5 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded font-medium transition border border-gray-700/60 flex items-center space-x-1">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                <span id="copyBtnText">Copy Draft</span>
+              </button>
+            </div>
+
+            <div class="bg-gray-950 p-4 rounded-xl border border-gray-800 text-xs space-y-2.5 text-gray-300 mono leading-relaxed" id="emailDraftContainer">
+              <!-- Email content injected here -->
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+
+    <!-- BOTTOM SECTION: RUNS HISTORY & OPERATIONS DASHBOARD -->
+    <section class="glass rounded-xl p-5 shadow-2xl space-y-5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-gray-800 gap-2">
+        <div class="flex items-center space-x-2">
+          <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          <h2 class="font-semibold text-sm text-gray-200">Operations Audit Trail & Metrics Dashboard</h2>
+        </div>
+        <span class="text-xs text-gray-500">Persists across evaluations in <span class="mono text-gray-400">runs_history.json</span></span>
+      </div>
+
+      <!-- KPI METRIC CARDS -->
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-3" id="metricsCards">
+        <div class="bg-gray-900/80 p-3 rounded-lg border border-gray-800 text-center">
+          <span class="text-[10px] text-gray-400 font-semibold uppercase block">Total Runs</span>
+          <span id="metricTotal" class="text-lg font-bold text-white mono">0</span>
+        </div>
+        <div class="bg-gray-900/80 p-3 rounded-lg border border-emerald-900/40 text-center">
+          <span class="text-[10px] text-emerald-400 font-semibold uppercase block">Approved</span>
+          <span id="metricApproved" class="text-lg font-bold text-emerald-400 mono">0 (0%)</span>
+        </div>
+        <div class="bg-gray-900/80 p-3 rounded-lg border border-amber-900/40 text-center">
+          <span class="text-[10px] text-amber-400 font-semibold uppercase block">Pending</span>
+          <span id="metricPending" class="text-lg font-bold text-amber-400 mono">0 (0%)</span>
+        </div>
+        <div class="bg-gray-900/80 p-3 rounded-lg border border-rose-900/40 text-center">
+          <span class="text-[10px] text-rose-400 font-semibold uppercase block">Rejected</span>
+          <span id="metricRejected" class="text-lg font-bold text-rose-400 mono">0 (0%)</span>
+        </div>
+        <div class="bg-gray-900/80 p-3 rounded-lg border border-gray-800 text-center">
+          <span class="text-[10px] text-gray-400 font-semibold uppercase block">Avg Processing</span>
+          <span id="metricAvgDur" class="text-lg font-bold text-blue-400 mono">0 ms</span>
+        </div>
+      </div>
+
+      <!-- HISTORY RUNS TABLE -->
+      <div class="overflow-x-auto rounded-lg border border-gray-800">
+        <table class="w-full text-left text-xs text-gray-300">
+          <thead class="bg-gray-900/90 text-gray-400 uppercase font-semibold text-[10px] border-b border-gray-800">
+            <tr>
+              <th class="px-4 py-2.5">Run ID</th>
+              <th class="px-4 py-2.5">Timestamp</th>
+              <th class="px-4 py-2.5">Company Name</th>
+              <th class="px-4 py-2.5">Country</th>
+              <th class="px-4 py-2.5">Status</th>
+              <th class="px-4 py-2.5">Risk Score</th>
+              <th class="px-4 py-2.5">Latency</th>
+              <th class="px-4 py-2.5">Summary</th>
+            </tr>
+          </thead>
+          <tbody id="historyTableBody" class="divide-y divide-gray-800/60 bg-gray-950/40 font-normal">
+            <!-- Dynamic rows -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-gray-900 py-4 text-center text-xs text-gray-600">
+    Zamp AI Solutions Analyst Case Study Build · PS-2 Vendor Onboarding · Fully runnable and testable
+  </footer>
+
+  <!-- CLIENT-SIDE LOGIC -->
+  <script>
+    let activePresetId = 'happy_path';
+    let currentPayload = {};
+    let lastGeneratedEmail = '';
+
+    // Initialize application
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadPresets();
+      await selectPreset('happy_path');
+      await refreshHistory();
+    });
+
+    async function loadPresets() {
+      try {
+        const res = await fetch('/api/presets');
+        const presets = await res.json();
+        const container = document.getElementById('presetPillsContainer');
+        container.innerHTML = presets.map(p => {
+          return `
+            <button onclick="selectPreset('${p.id}')" id="pill_${p.id}" class="preset-pill px-3 py-1.5 rounded-lg border font-medium text-xs transition flex items-center space-x-1.5 ${p.id === 'happy_path' ? 'bg-blue-600/20 border-blue-500 text-blue-300' : 'bg-gray-800/60 border-gray-700/60 text-gray-400 hover:text-white'}">
+              <span>${p.title.split(':')[0]}</span>
+            </button>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error("Failed to load presets", err);
+      }
+    }
+
+    async function selectPreset(presetId) {
+      activePresetId = presetId;
+      document.querySelectorAll('.preset-pill').forEach(btn => {
+        btn.classList.remove('bg-blue-600/20', 'border-blue-500', 'text-blue-300');
+        btn.classList.add('bg-gray-800/60', 'border-gray-700/60', 'text-gray-400');
+      });
+      const activeBtn = document.getElementById(`pill_${presetId}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('bg-gray-800/60', 'border-gray-700/60', 'text-gray-400');
+        activeBtn.classList.add('bg-blue-600/20', 'border-blue-500', 'text-blue-300');
+      }
+
+      try {
+        const res = await fetch(`/api/presets/${presetId}`);
+        const preset = await res.json();
+        currentPayload = preset.data;
+
+        // Update Scenario banner
+        document.getElementById('scenarioTitle').textContent = preset.title;
+        document.getElementById('scenarioDesc').textContent = preset.description;
+        const badge = document.getElementById('scenarioBadge');
+        badge.textContent = preset.badge;
+        if (preset.badge_color === 'green') {
+          badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800';
+        } else if (preset.badge_color === 'red') {
+          badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-rose-950 text-rose-400 border border-rose-800';
+        } else if (preset.badge_color === 'orange' || preset.badge_color === 'yellow') {
+          badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950 text-amber-400 border border-amber-800';
+        } else {
+          badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-purple-950 text-purple-400 border border-purple-800';
+        }
+
+        populateFormFromPayload(currentPayload);
+      } catch (err) {
+        console.error("Error loading preset payload", err);
+      }
+    }
+
+    function populateFormFromPayload(payload) {
+      document.getElementById('sub_id').value = payload.submission_id || '';
+      
+      const comp = payload.company || {};
+      document.getElementById('comp_legal_name').value = comp.legal_name || '';
+      document.getElementById('comp_dba_name').value = comp.dba_name || '';
+      document.getElementById('comp_country').value = comp.country_code || '';
+      document.getElementById('comp_type').value = comp.business_type || '';
+      document.getElementById('comp_tax_id').value = comp.tax_id || '';
+      document.getElementById('comp_tax_type').value = comp.tax_id_type || '';
+      document.getElementById('comp_contact_name').value = comp.contact_name || '';
+      document.getElementById('comp_contact_email').value = comp.contact_email || '';
+
+      const bank = payload.banking || {};
+      document.getElementById('bank_name').value = bank.bank_name || '';
+      document.getElementById('bank_country').value = bank.bank_country || '';
+      document.getElementById('bank_holder').value = bank.account_holder_name || '';
+      document.getElementById('bank_acc_num').value = bank.account_number_or_iban || '';
+      document.getElementById('bank_routing').value = bank.routing_or_sort_code || '';
+      document.getElementById('bank_swift').value = bank.swift_bic || '';
+      document.getElementById('bank_curr').value = bank.currency || 'USD';
+      document.getElementById('bank_acc_type').value = bank.account_type || 'Corporate Checking';
+
+      const docs = payload.compliance || {};
+      document.getElementById('doc_tax').checked = !!docs.tax_document_attached;
+      document.getElementById('doc_bank').checked = !!docs.bank_statement_attached;
+      document.getElementById('doc_incorp').checked = !!docs.certificate_of_incorporation;
+      document.getElementById('doc_pep').checked = !!docs.pep_sanctions_declared_clear;
+
+      document.getElementById('jsonPayloadEditor').value = JSON.stringify(payload, null, 2);
+    }
+
+    function getPayloadFromInputs() {
+      if (!document.getElementById('jsonViewContainer').classList.contains('hidden')) {
+        try {
+          return JSON.parse(document.getElementById('jsonPayloadEditor').value);
+        } catch (e) {
+          alert("Invalid JSON format in editor!");
+          return null;
+        }
+      }
+
+      return {
+        submission_id: document.getElementById('sub_id').value,
+        company: {
+          legal_name: document.getElementById('comp_legal_name').value,
+          dba_name: document.getElementById('comp_dba_name').value,
+          country_code: document.getElementById('comp_country').value,
+          business_address: "Address provided in profile",
+          business_type: document.getElementById('comp_type').value,
+          tax_id: document.getElementById('comp_tax_id').value,
+          tax_id_type: document.getElementById('comp_tax_type').value,
+          contact_name: document.getElementById('comp_contact_name').value,
+          contact_email: document.getElementById('comp_contact_email').value,
+          contact_phone: "+1-000-000-0000",
+          website: ""
+        },
+        banking: {
+          bank_name: document.getElementById('bank_name').value,
+          bank_country: document.getElementById('bank_country').value,
+          account_holder_name: document.getElementById('bank_holder').value,
+          account_number_or_iban: document.getElementById('bank_acc_num').value,
+          routing_or_sort_code: document.getElementById('bank_routing').value,
+          swift_bic: document.getElementById('bank_swift').value,
+          currency: document.getElementById('bank_curr').value,
+          account_type: document.getElementById('bank_acc_type').value
+        },
+        compliance: {
+          tax_document_attached: document.getElementById('doc_tax').checked,
+          bank_statement_attached: document.getElementById('doc_bank').checked,
+          certificate_of_incorporation: document.getElementById('doc_incorp').checked,
+          pep_sanctions_declared_clear: document.getElementById('doc_pep').checked
+        }
+      };
+    }
+
+    function toggleInputMode(mode) {
+      if (mode === 'form') {
+        document.getElementById('submissionForm').classList.remove('hidden');
+        document.getElementById('jsonViewContainer').classList.add('hidden');
+        document.getElementById('tabFormBtn').className = 'px-2.5 py-1 rounded-md font-medium bg-blue-600 text-white transition';
+        document.getElementById('tabJsonBtn').className = 'px-2.5 py-1 rounded-md font-medium text-gray-400 hover:text-white transition';
+      } else {
+        const payload = getPayloadFromInputs();
+        if (payload) {
+          document.getElementById('jsonPayloadEditor').value = JSON.stringify(payload, null, 2);
+        }
+        document.getElementById('submissionForm').classList.add('hidden');
+        document.getElementById('jsonViewContainer').classList.remove('hidden');
+        document.getElementById('tabFormBtn').className = 'px-2.5 py-1 rounded-md font-medium text-gray-400 hover:text-white transition';
+        document.getElementById('tabJsonBtn').className = 'px-2.5 py-1 rounded-md font-medium bg-blue-600 text-white transition';
+      }
+    }
+
+    async function executePipeline() {
+      const payload = getPayloadFromInputs();
+      if (!payload) return;
+
+      const runBtn = document.getElementById('runPipelineBtn');
+      runBtn.disabled = true;
+      runBtn.innerHTML = `
+        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+        <span>Executing Pipeline Stages...</span>
+      `;
+
+      const stagesContainer = document.getElementById('stagesContainer');
+      stagesContainer.innerHTML = `
+        <div class="space-y-3">
+          <div class="p-3 rounded-lg bg-gray-900 border border-blue-500/50 flex items-center justify-between">
+            <span class="text-xs text-blue-300 font-semibold animate-pulse">Running Stage 1: Syntax & Structural Completeness...</span>
+            <span class="text-xs text-gray-500 mono">evaluating</span>
+          </div>
+        </div>
+      `;
+
+      // Small realistic progression delay for live demo visibility
+      await new Promise(r => setTimeout(r, 400));
+
+      try {
+        const res = await fetch('/api/evaluate', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const errData = await res.json();
+          alert("Pipeline evaluation error: " + (errData.detail || "Bad request"));
+          return;
+        }
+
+        const data = await res.json();
+        renderEvaluationResult(data.decision);
+        updateMetrics(data.metrics);
+        await refreshHistory();
+      } catch (err) {
+        alert("Server error: " + err);
+      } finally {
+        runBtn.disabled = false;
+        runBtn.innerHTML = `
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span>Run Automated Verification Pipeline</span>
+        `;
+      }
+    }
+
+    function renderEvaluationResult(decision) {
+      document.getElementById('pipelineTotalMs').textContent = decision.total_duration_ms;
+
+      // Render Stage Cards
+      const container = document.getElementById('stagesContainer');
+      container.innerHTML = decision.stages.map(st => {
+        let badgeColor = 'bg-emerald-950 text-emerald-400 border-emerald-800';
+        let borderColor = 'border-gray-800';
+        let icon = '✓';
+
+        if (st.status === 'FAILED') {
+          badgeColor = 'bg-rose-950 text-rose-400 border-rose-800';
+          borderColor = 'border-rose-900/50';
+          icon = '✕';
+        } else if (st.status === 'WARNING') {
+          badgeColor = 'bg-amber-950 text-amber-400 border-amber-800';
+          borderColor = 'border-amber-900/50';
+          icon = '⚠';
+        }
+
+        return `
+          <div class="p-3.5 rounded-lg bg-gray-900/80 border ${borderColor} space-y-2 transition">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-2.5">
+                <span class="w-5 h-5 rounded-full flex items-center justify-center font-bold text-xs ${badgeColor} border">${icon}</span>
+                <span class="font-semibold text-xs text-gray-200">${st.stage_name}</span>
+              </div>
+              <div class="flex items-center space-x-2">
+                <span class="text-[10px] mono text-gray-500">${st.duration_ms} ms</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold border uppercase ${badgeColor}">${st.status}</span>
+              </div>
+            </div>
+            <p class="text-[11px] text-gray-400 pl-7">${st.description}</p>
+            
+            <!-- Rules Sub-List -->
+            <div class="pl-7 space-y-1 pt-1">
+              ${st.rule_checks.map(rc => {
+                let rcColor = rc.passed ? 'text-gray-400' : (rc.severity === 'CRITICAL' ? 'text-rose-400 font-medium' : 'text-amber-300');
+                let rcDot = rc.passed ? 'text-emerald-500' : 'text-rose-500 font-bold';
+                return `
+                  <div class="text-[11px] flex items-start space-x-1.5 ${rcColor}">
+                    <span class="${rcDot}">•</span>
+                    <span><strong>${rc.rule_name}:</strong> ${rc.message}</span>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Decision Card
+      const card = document.getElementById('decisionCard');
+      card.classList.remove('hidden');
+
+      const statusText = document.getElementById('decisionStatusText');
+      const iconBadge = document.getElementById('decisionIconBadge');
+      const scoreBar = document.getElementById('riskScoreBar');
+      const scoreVal = document.getElementById('riskScoreValue');
+
+      scoreVal.textContent = `${decision.risk_score} / 100`;
+      scoreBar.style.width = `${decision.risk_score}%`;
+
+      if (decision.status === 'APPROVED') {
+        card.className = 'glass rounded-xl p-5 shadow-2xl space-y-4 border-l-4 border-emerald-500';
+        statusText.textContent = 'APPROVED';
+        statusText.className = 'text-xl font-bold tracking-tight text-emerald-400';
+        iconBadge.className = 'w-10 h-10 rounded-xl flex items-center justify-center font-bold text-lg bg-emerald-950 text-emerald-400 border border-emerald-800';
+        iconBadge.textContent = '✓';
+        scoreBar.className = 'h-full bg-emerald-500 rounded-full';
+      } else if (decision.status === 'PENDING_ACTION') {
+        card.className = 'glass rounded-xl p-5 shadow-2xl space-y-4 border-l-4 border-amber-500';
+        statusText.textContent = 'PENDING (ACTION REQUIRED)';
+        statusText.className = 'text-xl font-bold tracking-tight text-amber-400';
+        iconBadge.className = 'w-10 h-10 rounded-xl flex items-center justify-center font-bold text-lg bg-amber-950 text-amber-400 border border-amber-800';
+        iconBadge.textContent = '⏳';
+        scoreBar.className = 'h-full bg-amber-500 rounded-full';
+      } else {
+        card.className = 'glass rounded-xl p-5 shadow-2xl space-y-4 border-l-4 border-rose-500';
+        statusText.textContent = 'REJECTED';
+        statusText.className = 'text-xl font-bold tracking-tight text-rose-400';
+        iconBadge.className = 'w-10 h-10 rounded-xl flex items-center justify-center font-bold text-lg bg-rose-950 text-rose-400 border border-rose-800';
+        iconBadge.textContent = '✕';
+        scoreBar.className = 'h-full bg-rose-500 rounded-full';
+      }
+
+      document.getElementById('decisionSummary').textContent = decision.summary_reasoning;
+      document.getElementById('decisionNextSteps').textContent = decision.next_steps;
+
+      // Vendor Communication
+      const commSec = document.getElementById('vendorCommSection');
+      if (decision.vendor_communication) {
+        commSec.classList.remove('hidden');
+        const comm = decision.vendor_communication;
+        lastGeneratedEmail = `To: ${comm.recipient}\nSubject: ${comm.subject}\n\n${comm.greeting}\n\n${comm.body_summary}\n\nAction Items Needed:\n${comm.action_items.map(a => '- ' + a).join('\n')}\n\n${comm.deadline_note}\n\nBest regards,\nAccounts Payable & Vendor Operations`;
+        
+        document.getElementById('emailDraftContainer').innerHTML = `
+          <div><span class="text-gray-500 font-semibold">To:</span> <span class="text-blue-400">${comm.recipient}</span></div>
+          <div><span class="text-gray-500 font-semibold">Subject:</span> <span class="text-gray-200 font-semibold">${comm.subject}</span></div>
+          <div class="pt-2 border-t border-gray-900">${comm.greeting}</div>
+          <div>${comm.body_summary}</div>
+          <div class="space-y-1.5 py-1">
+            <span class="text-amber-300 font-semibold block">Required Remediation Actions:</span>
+            <ul class="list-disc pl-5 space-y-1 text-gray-300">
+              ${comm.action_items.map(it => `<li>${it}</li>`).join('')}
+            </ul>
+          </div>
+          <div class="text-gray-400 italic">${comm.deadline_note}</div>
+        `;
+      } else {
+        commSec.classList.add('hidden');
+      }
+    }
+
+    function copyEmailDraft() {
+      navigator.clipboard.writeText(lastGeneratedEmail);
+      const btn = document.getElementById('copyBtnText');
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy Draft', 2000);
+    }
+
+    async function refreshHistory() {
+      try {
+        const res = await fetch('/api/history');
+        const runs = await res.json();
+        const tbody = document.getElementById('historyTableBody');
+        
+        if (runs.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="8" class="px-4 py-6 text-center text-gray-500">No evaluations recorded yet. Run a scenario above.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = runs.map(r => {
+          let badge = 'bg-emerald-950 text-emerald-400 border-emerald-800';
+          if (r.status === 'REJECTED') badge = 'bg-rose-950 text-rose-400 border-rose-800';
+          else if (r.status === 'PENDING_ACTION') badge = 'bg-amber-950 text-amber-400 border-amber-800';
+
+          return `
+            <tr class="hover:bg-gray-900/40 transition">
+              <td class="px-4 py-2.5 mono text-blue-400 font-medium">${r.run_id}</td>
+              <td class="px-4 py-2.5 text-gray-400">${r.timestamp.split(' ')[1] || r.timestamp}</td>
+              <td class="px-4 py-2.5 text-white font-medium">${r.company_name}</td>
+              <td class="px-4 py-2.5 mono uppercase text-gray-400">${r.country_code}</td>
+              <td class="px-4 py-2.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold border ${badge}">${r.status}</span></td>
+              <td class="px-4 py-2.5 mono font-bold ${r.risk_score > 60 ? 'text-rose-400' : (r.risk_score > 25 ? 'text-amber-400' : 'text-emerald-400')}">${r.risk_score}</td>
+              <td class="px-4 py-2.5 mono text-gray-400">${r.duration_ms} ms</td>
+              <td class="px-4 py-2.5 text-gray-400 max-w-xs truncate" title="${r.summary}">${r.summary}</td>
+            </tr>
+          `;
+        }).join('');
+
+        const mRes = await fetch('/api/metrics');
+        const metrics = await mRes.json();
+        updateMetrics(metrics);
+      } catch (err) {
+        console.error("Error fetching history", err);
+      }
+    }
+
+    function updateMetrics(m) {
+      document.getElementById('metricTotal').textContent = m.total_runs;
+      document.getElementById('metricApproved').textContent = `${m.approved_count} (${m.approved_rate})`;
+      document.getElementById('metricPending').textContent = `${m.pending_count} (${m.pending_rate})`;
+      document.getElementById('metricRejected').textContent = `${m.rejected_count} (${m.rejected_rate})`;
+      document.getElementById('metricAvgDur').textContent = `${m.avg_duration_ms} ms`;
+    }
+
+    async function clearHistory() {
+      if (confirm("Reset audit history and dashboard metrics?")) {
+        await fetch('/api/history/clear', {method: 'POST'});
+        await refreshHistory();
+      }
+    }
+  </script>
+</body>
+</html>
+

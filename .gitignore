@@ -1,0 +1,16 @@
+# Environments & Dependencies
+.venv/
+.bin/
+.uv_cache/
+.uv_python/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# App Data / Logs / Local state
+runs_history.json
+*.log
+.DS_Store
+
+# Candidate guide is part of repo or tracked as needed
+
