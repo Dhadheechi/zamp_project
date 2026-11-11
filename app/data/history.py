@@ -21,10 +21,12 @@ class RunHistoryManager:
     def record_run(self, submission: VendorSubmission, decision: EvaluationDecision) -> RunRecord:
         now_utc = datetime.now(timezone.utc)
         now_ist = now_utc.astimezone(IST_TZ)
+        utc_str = now_utc.strftime("%H:%M:%S UTC")
+        ist_str = now_ist.strftime("%H:%M:%S IST")
         record = RunRecord(
             run_id=f"RUN-{uuid.uuid4().hex[:8].upper()}",
             submission_id=submission.submission_id,
-            timestamp=now_utc.strftime("%Y-%m-%d %H:%M:%S UTC"),
+            timestamp=f"{utc_str} ({ist_str})",
             timestamp_ist=now_ist.strftime("%Y-%m-%d %H:%M:%S IST"),
             company_name=submission.company.legal_name,
             country_code=submission.company.country_code,
