@@ -379,7 +379,7 @@
           <thead class="bg-gray-900/90 text-gray-400 uppercase font-semibold text-[10px] border-b border-gray-800">
             <tr>
               <th class="px-4 py-2.5">Run ID</th>
-              <th class="px-4 py-2.5">Timestamp</th>
+              <th class="px-4 py-2.5">Timestamp (IST / UTC)</th>
               <th class="px-4 py-2.5">Company Name</th>
               <th class="px-4 py-2.5">Country</th>
               <th class="px-4 py-2.5">Status</th>
@@ -957,13 +957,39 @@
       }
     }
 
+    function formatRunTime(r) {
+      if (r && r.timestamp_ist && r.timestamp) {
+        const istPart = r.timestamp_ist.replace(/^[0-9]{4}-[0-9]{2}-[0-9]{2}\s*/, '');
+        const utcPart = r.timestamp.replace(/^[0-9]{4}-[0-9]{2}-[0-9]{2}\s*/, '');
+        return { ist: istPart, utc: utcPart };
+      }
+      const ts = typeof r === 'string' ? r : (r ? r.timestamp : '');
+      let d;
+      if (!ts) {
+        d = new Date();
+      } else if (typeof ts === 'string' && ts.includes('UTC')) {
+        d = new Date(ts.replace(' ', 'T').replace(' UTC', 'Z'));
+      } else {
+        d = new Date(ts);
+      }
+      if (isNaN(d.getTime())) {
+        return { ist: ts || 'N/A', utc: ts || 'N/A' };
+      }
+      const istTime = d.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const utcTime = d.toLocaleTimeString('en-GB', { timeZone: 'UTC', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      return { ist: `${istTime} IST`, utc: `${utcTime} UTC` };
+    }
+
     function recordLocalFallbackRun(sub, decision) {
       try {
         let runs = JSON.parse(localStorage.getItem('zamp_runs') || '[]');
+        const now = new Date();
+        const istTimeStr = now.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
         const run = {
           run_id: 'RUN-' + Math.random().toString(36).substring(2, 10).toUpperCase(),
           submission_id: sub.submission_id || 'SUB-CUSTOM',
-          timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
+          timestamp: now.toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
+          timestamp_ist: `${istTimeStr} IST`,
           company_name: sub.company.legal_name,
           country_code: sub.company.country_code,
           status: decision.status,
@@ -991,10 +1017,15 @@
         });
 
         const tbody = document.getElementById('historyTableBody');
-        tbody.innerHTML = runs.map(r => `
+        tbody.innerHTML = runs.map(r => {
+          const times = formatRunTime(r);
+          return `
           <tr class="hover:bg-gray-900/40 transition">
             <td class="px-4 py-2.5 mono text-blue-400 font-medium">${r.run_id}</td>
-            <td class="px-4 py-2.5 text-gray-400">${r.timestamp.split(' ')[1] || r.timestamp}</td>
+            <td class="px-4 py-2.5 whitespace-nowrap">
+              <div class="text-white font-medium mono text-xs">${times.ist}</div>
+              <div class="text-[11px] text-gray-400 mono">${times.utc}</div>
+            </td>
             <td class="px-4 py-2.5 text-white font-medium">${r.company_name}</td>
             <td class="px-4 py-2.5 mono uppercase text-gray-400">${r.country_code}</td>
             <td class="px-4 py-2.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold border ${r.status === 'APPROVED' ? 'bg-emerald-950 text-emerald-400 border-emerald-800' : (r.status === 'REJECTED' ? 'bg-rose-950 text-rose-400 border-rose-800' : 'bg-amber-950 text-amber-400 border-amber-800')}">${r.status}</span></td>
@@ -1002,7 +1033,8 @@
             <td class="px-4 py-2.5 mono text-gray-400">${r.duration_ms} ms</td>
             <td class="px-4 py-2.5 text-gray-400 max-w-xs truncate" title="${r.summary}">${r.summary}</td>
           </tr>
-        `).join('');
+        `;
+        }).join('');
       } catch (e) {
         console.error("Local storage error:", e);
       }
@@ -1031,10 +1063,15 @@
           if (r.status === 'REJECTED') badge = 'bg-rose-950 text-rose-400 border-rose-800';
           else if (r.status === 'PENDING_ACTION') badge = 'bg-amber-950 text-amber-400 border-amber-800';
 
+          const times = formatRunTime(r);
+
           return `
             <tr class="hover:bg-gray-900/40 transition">
               <td class="px-4 py-2.5 mono text-blue-400 font-medium">${r.run_id}</td>
-              <td class="px-4 py-2.5 text-gray-400">${r.timestamp.split(' ')[1] || r.timestamp}</td>
+              <td class="px-4 py-2.5 whitespace-nowrap">
+                <div class="text-white font-medium mono text-xs">${times.ist}</div>
+                <div class="text-[11px] text-gray-400 mono">${times.utc}</div>
+              </td>
               <td class="px-4 py-2.5 text-white font-medium">${r.company_name}</td>
               <td class="px-4 py-2.5 mono uppercase text-gray-400">${r.country_code}</td>
               <td class="px-4 py-2.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold border ${badge}">${r.status}</span></td>

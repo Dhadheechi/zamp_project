@@ -2,10 +2,11 @@ import json
 import os
 import uuid
 from typing import List, Dict, Any, Optional
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from app.models.schemas import RunRecord, EvaluationDecision, VendorSubmission
 
 HISTORY_FILE = "runs_history.json"
+IST_TZ = timezone(timedelta(hours=5, minutes=30))
 
 class RunHistoryManager:
     def __init__(self, filepath: str = HISTORY_FILE):
@@ -18,10 +19,13 @@ class RunHistoryManager:
                 json.dump([], f)
 
     def record_run(self, submission: VendorSubmission, decision: EvaluationDecision) -> RunRecord:
+        now_utc = datetime.now(timezone.utc)
+        now_ist = now_utc.astimezone(IST_TZ)
         record = RunRecord(
             run_id=f"RUN-{uuid.uuid4().hex[:8].upper()}",
             submission_id=submission.submission_id,
-            timestamp=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC"),
+            timestamp=now_utc.strftime("%Y-%m-%d %H:%M:%S UTC"),
+            timestamp_ist=now_ist.strftime("%Y-%m-%d %H:%M:%S IST"),
             company_name=submission.company.legal_name,
             country_code=submission.company.country_code,
             status=decision.status,

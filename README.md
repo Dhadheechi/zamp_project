@@ -2,6 +2,9 @@
 
 An automated, explainable vendor verification and onboarding engine with stage-by-stage real-time execution, audit trails, and automated vendor remediation notices.
 
+> 🌐 **Live Interactive Website (Cloudflare Pages)**: **[https://zamp-vendor-onboarding.pages.dev/](https://zamp-vendor-onboarding.pages.dev/)**  
+> Access the complete, zero-install interactive demo live in your browser.
+
 ---
 
 ## 🎯 Executive Overview
@@ -73,11 +76,19 @@ The system comes pre-loaded with **5 realistic test scenarios** accessible via 1
 
 ## 🚀 Quickstart & Setup
 
-### Prerequisites
+### 🌐 Live Cloudflare Deployment (Zero Setup)
+Experience the full interactive application directly in your browser:  
+👉 **[https://zamp-vendor-onboarding.pages.dev/](https://zamp-vendor-onboarding.pages.dev/)**
+
+---
+
+### Local Installation & Run
+
+#### Prerequisites
 - Python 3.10+
 - `uv` package manager
 
-### 1. Launch with `uv`
+#### 1. Launch with `uv`
 ```bash
 # Run web server directly
 uv run python run.py
@@ -86,7 +97,7 @@ Open your browser to:
 👉 **http://127.0.0.1:8000**  
 (Interactive API Documentation available at `http://127.0.0.1:8000/docs`)
 
-### 2. Headless CLI Mode
+#### 2. Headless CLI Mode
 You can also run any preset directly in your terminal:
 ```bash
 uv run python run.py --cli --preset happy_path
@@ -96,40 +107,8 @@ uv run python run.py --cli --preset missing_crossborder_swift
 uv run python run.py --cli --preset sanctions_watchlist_hit
 ```
 
-### 3. Run Automated Tests
+#### 3. Run Automated Tests
 ```bash
 uv run python -m unittest tests/test_pipeline.py
 ```
-
----
-
-## 🎥 5-Minute Demo Video Walkthrough Guide
-
-Follow this rehearsed sequence for your Loom video submission and live interview:
-
-1. **Minute 0:00 – 1:00 | The Problem & Framework**
-   - Introduce yourself and explain why vendor onboarding is a critical bottleneck for AP teams.
-   - Explain the 4-stage pipeline concept: Format Syntax $\rightarrow$ Entity Cross-Field Consistency $\rightarrow$ Risk/Sanctions Screening $\rightarrow$ Actionable Decision.
-
-2. **Minute 1:00 – 2:00 | The Happy Path (Live Run)**
-   - Click **"Happy Path"** preset in the web UI.
-   - Click **"Run Automated Verification Pipeline"**.
-   - Show how each stage executes live in milliseconds: ABA routing validated, entity alignment 100%, status set to `APPROVED`.
-
-3. **Minute 2:00 – 3:30 | Edge Cases (The Core Differentiator)**
-   - **Show Edge Case 1 (Name Mismatch / Fraud Flag)**:
-     - Click **"Edge Case 1: Name Mismatch"**.
-     - Run pipeline $\rightarrow$ Show immediate `REJECTED` status. Explain that invoice redirection / third-party payout fraud is a multi-million-dollar risk that rules catch before any payment clears.
-   - **Show Edge Case 2 (Tax / Country Collision)**:
-     - Click **"Edge Case 2: Tax Country Collision"**.
-     - Run pipeline $\rightarrow$ Show status `PENDING (ACTION REQUIRED)`.
-     - Highlight the **Automated Vendor Remediation Notice**: Show the generated email with specific instructions asking the vendor for German USt-IdNr instead of UK VAT.
-
-4. **Minute 3:30 – 4:30 | Audit History & Metrics Dashboard**
-   - Scroll down to the **Operations Audit Trail & Metrics Dashboard**.
-   - Point out the real-time KPI metrics (Approval Rate, Pending Rate, Rejection Rate, Avg Processing Latency).
-   - Show how all past runs are logged with timestamps, risk scores, and full execution summaries.
-
-5. **Minute 4:30 – 5:00 | Wrap-up & Extensibility**
-   - Conclude with how this architecture easily scales to ERP webhook integrations (NetSuite, Workday, SAP) and continuous periodic re-screening.
 

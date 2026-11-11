@@ -79,6 +79,7 @@ class RunRecord(BaseModel):
     run_id: str
     submission_id: str
     timestamp: str
+    timestamp_ist: Optional[str] = None
     company_name: str
     country_code: str
     status: str
